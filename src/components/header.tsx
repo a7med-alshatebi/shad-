@@ -28,12 +28,12 @@ export function Header() {
           
           <div className="flex items-center space-x-3">
             <div className="text-right">
-              <p className="text-sm font-medium text-foreground">John Doe</p>
-              <p className="text-xs text-muted-foreground">john@example.com</p>
+              <p className="text-sm font-medium text-foreground">Ahmed Abdulnasser</p>
+              <p className="text-xs text-muted-foreground">ahmed@example.com</p>
             </div>
             <Avatar>
               <AvatarImage src="https://github.com/shadcn.png" alt="User" />
-              <AvatarFallback>JD</AvatarFallback>
+              <AvatarFallback>AA</AvatarFallback>
             </Avatar>
           </div>
         </div>
