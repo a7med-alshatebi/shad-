@@ -41,12 +41,12 @@ export function Header() {
         {/* User Avatar */}
         <div className="flex items-center space-x-3">
           <div className="text-right">
-            <p className="text-sm font-medium text-gray-900">John Doe</p>
-            <p className="text-xs text-gray-500">john@example.com</p>
+            <p className="text-sm font-medium text-gray-900">Ahmed Abdulnasser</p>
+            <p className="text-xs text-gray-500">ahmed@example.com</p>
           </div>
           <Avatar>
             <AvatarImage src="/api/placeholder/32/32" alt="User" />
-            <AvatarFallback>JD</AvatarFallback>
+            <AvatarFallback>AA</AvatarFallback>
           </Avatar>
         </div>
       </div>
