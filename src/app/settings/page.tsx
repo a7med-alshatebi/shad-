@@ -49,7 +49,7 @@ export default function SettingsPage() {
     role: "Administrator"
   });
 
-  const [securitySettings, setSecuritySettings] = useState({
+  const [securitySettings] = useState({
     twoFactorEnabled: true,
     passwordLastChanged: "30 days ago",
     apiKeysCount: 3
@@ -417,7 +417,7 @@ function AppearanceSettings({ data, onChange }: {
             Theme
           </label>
           <div className="grid grid-cols-3 gap-3">
-            {["light", "dark", "auto"].map((theme) => (
+            {["light", "dark", "auto"].map((theme: string) => (
               <label key={theme} className="flex items-center space-x-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
                 <input 
                   type="radio" 

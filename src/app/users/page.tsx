@@ -91,7 +91,7 @@ export default function UsersPage() {
   const [users, setUsers] = useState(mockUsers);
 
   // Filter users based on search and filters
-  const filteredUsers = users.filter(user => {
+  const filteredUsers = users.filter((user: User) => {
     const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          user.email.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === "all" || user.status === statusFilter;
@@ -103,9 +103,9 @@ export default function UsersPage() {
   // Stats calculations
   const stats = {
     total: users.length,
-    active: users.filter(u => u.status === "active").length,
-    new: users.filter(u => u.status === "active").length, // Mock calculation
-    blocked: users.filter(u => u.status === "blocked").length
+    active: users.filter((u: User) => u.status === "active").length,
+    new: users.filter((u: User) => u.status === "active").length, // Mock calculation
+    blocked: users.filter((u: User) => u.status === "blocked").length
   };
 
   const handleAddUser = (newUser: NewUser) => {
@@ -122,14 +122,14 @@ export default function UsersPage() {
   const handleExport = () => {
     const csvContent = [
       ["Name", "Email", "Role", "Status", "Last Active"],
-      ...filteredUsers.map(user => [
+      ...filteredUsers.map((user: User) => [
         user.name,
         user.email,
         user.role,
         user.status,
         user.lastActive
       ])
-    ].map(row => row.join(",")).join("\n");
+    ].map((row: string[]) => row.join(",")).join("\n");
 
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
@@ -362,7 +362,7 @@ function EnhancedUserTable({ users }: { users: User[] }) {
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => (
+              {users.map((user: User) => (
                 <tr key={user.id} className="border-b hover:bg-gray-50">
                   <td className="py-3 px-4">
                     <div className="flex items-center space-x-3">
