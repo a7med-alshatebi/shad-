@@ -55,6 +55,16 @@ const users = [
     initials: "TB",
     lastSeen: "Never",
   },
+  {
+    id: 5,
+    name: "Hibo beiber",
+    email: "hibo@example.com",
+    role: "User",
+    status: "Active",
+    avatar: "/api/placeholder/32/32",
+    initials: "HB",
+    lastSeen: "Never",
+  },
 ];
 
 const getStatusBadge = (status: string) => {
