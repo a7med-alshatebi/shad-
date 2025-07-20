@@ -1,10 +1,13 @@
+"use client";
+
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Bell, Settings, Check, X, AlertCircle, Info, CheckCircle } from "lucide-react";
+import { Bell, Settings, Check, X, AlertCircle, Info, CheckCircle, Search, Filter } from "lucide-react";
 
 export default function NotificationsPage() {
-  const notifications = [
+  const [notifications, setNotifications] = useState([
     {
       id: 1,
       title: "New user registration",
@@ -59,7 +62,41 @@ export default function NotificationsPage() {
       read: false,
       priority: "high"
     }
-  ];
+  ]);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [priorityFilter, setPriorityFilter] = useState("all");
+
+  // Filter notifications
+  const filteredNotifications = notifications.filter(notification => {
+    const matchesSearch = notification.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         notification.message.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = typeFilter === "all" || notification.type === typeFilter;
+    const matchesPriority = priorityFilter === "all" || notification.priority === priorityFilter;
+    
+    return matchesSearch && matchesType && matchesPriority;
+  });
+
+  const unreadCount = notifications.filter(n => !n.read).length;
+
+  const markAsRead = (id: number) => {
+    setNotifications(prev => prev.map(n => 
+      n.id === id ? { ...n, read: true } : n
+    ));
+  };
+
+  const markAllAsRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  };
+
+  const deleteNotification = (id: number) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
+  };
+
+  const clearAll = () => {
+    setNotifications([]);
+  };
 
   const getIcon = (type: string) => {
     switch (type) {
@@ -101,9 +138,13 @@ export default function NotificationsPage() {
           </p>
         </div>
         <div className="flex space-x-2">
-          <Button variant="outline">
+          <Button variant="outline" onClick={markAllAsRead} disabled={unreadCount === 0}>
             <Check className="h-4 w-4 mr-2" />
-            Mark All Read
+            Mark All Read ({unreadCount})
+          </Button>
+          <Button variant="outline" onClick={clearAll} disabled={notifications.length === 0}>
+            <X className="h-4 w-4 mr-2" />
+            Clear All
           </Button>
           <Button variant="outline">
             <Settings className="h-4 w-4 mr-2" />
@@ -120,8 +161,8 @@ export default function NotificationsPage() {
             <Bell className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">24</div>
-            <p className="text-xs text-gray-600">Last 7 days</p>
+            <div className="text-2xl font-bold">{notifications.length}</div>
+            <p className="text-xs text-gray-600">All time</p>
           </CardContent>
         </Card>
         <Card>
@@ -130,7 +171,7 @@ export default function NotificationsPage() {
             <Bell className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">4</div>
+            <div className="text-2xl font-bold">{unreadCount}</div>
             <p className="text-xs text-red-600">Requires attention</p>
           </CardContent>
         </Card>
@@ -140,7 +181,7 @@ export default function NotificationsPage() {
             <AlertCircle className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1</div>
+            <div className="text-2xl font-bold">{notifications.filter(n => n.priority === 'critical').length}</div>
             <p className="text-xs text-red-600">High priority</p>
           </CardContent>
         </Card>
@@ -150,24 +191,57 @@ export default function NotificationsPage() {
             <CheckCircle className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">18</div>
-            <p className="text-xs text-green-600">+12% from last week</p>
+            <div className="text-2xl font-bold">{notifications.length}</div>
+            <p className="text-xs text-green-600">Recent activity</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Filter Tabs */}
+      {/* Search and Filters */}
       <Card>
         <CardHeader>
-          <div className="flex space-x-4">
-            <Button variant="default" size="sm">All</Button>
-            <Button variant="outline" size="sm">Unread</Button>
-            <Button variant="outline" size="sm">Critical</Button>
-            <Button variant="outline" size="sm">System</Button>
-            <Button variant="outline" size="sm">Security</Button>
+          <div className="flex items-center space-x-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                placeholder="Search notifications..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <select
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="all">All Types</option>
+              <option value="info">Info</option>
+              <option value="warning">Warning</option>
+              <option value="error">Error</option>
+              <option value="success">Success</option>
+            </select>
+            <select
+              value={priorityFilter}
+              onChange={(e) => setPriorityFilter(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="all">All Priorities</option>
+              <option value="critical">Critical</option>
+              <option value="high">High</option>
+              <option value="normal">Normal</option>
+              <option value="low">Low</option>
+            </select>
           </div>
         </CardHeader>
       </Card>
+
+      {/* Results Count */}
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-gray-600">
+          Showing {filteredNotifications.length} of {notifications.length} notifications
+        </p>
+      </div>
 
       {/* Notifications List */}
       <Card>
@@ -176,7 +250,7 @@ export default function NotificationsPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {notifications.map((notification) => (
+            {filteredNotifications.map((notification) => (
               <div
                 key={notification.id}
                 className={`flex items-start space-x-4 p-4 border rounded-lg transition-colors ${
@@ -209,16 +283,29 @@ export default function NotificationsPage() {
                 
                 <div className="flex items-center space-x-2">
                   {!notification.read && (
-                    <Button variant="ghost" size="sm">
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => markAsRead(notification.id)}
+                    >
                       <Check className="h-4 w-4" />
                     </Button>
                   )}
-                  <Button variant="ghost" size="sm">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => deleteNotification(notification.id)}
+                  >
                     <X className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
             ))}
+            {filteredNotifications.length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                No notifications found matching your criteria.
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>

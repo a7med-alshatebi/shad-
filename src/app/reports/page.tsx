@@ -1,10 +1,17 @@
+"use client";
+
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Download, Calendar, Filter, Plus } from "lucide-react";
+import { FileText, Download, Calendar, Filter, Plus, Search, X } from "lucide-react";
 
 export default function ReportsPage() {
-  const reports = [
+  const [searchTerm, setSearchTerm] = useState("");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [showGenerateModal, setShowGenerateModal] = useState(false);
+  const [reports, setReports] = useState([
     {
       id: 1,
       name: "Monthly User Report",
@@ -50,7 +57,66 @@ export default function ReportsPage() {
       date: "2025-01-08",
       size: "1.2 MB"
     }
-  ];
+  ]);
+
+  // Filter reports based on search and filters
+  const filteredReports = reports.filter(report => {
+    const matchesSearch = report.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         report.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = typeFilter === "all" || report.type.toLowerCase().includes(typeFilter.toLowerCase());
+    const matchesStatus = statusFilter === "all" || report.status === statusFilter;
+    
+    return matchesSearch && matchesType && matchesStatus;
+  });
+
+  const handleGenerateReport = (reportData: any) => {
+    const newReport = {
+      id: reports.length + 1,
+      ...reportData,
+      status: "processing",
+      date: new Date().toISOString().split('T')[0],
+      size: "Generating..."
+    };
+    setReports([newReport, ...reports]);
+    setShowGenerateModal(false);
+    
+    // Simulate report generation
+    setTimeout(() => {
+      setReports(prev => prev.map(r => 
+        r.id === newReport.id 
+          ? { ...r, status: "completed", size: "1.5 MB" }
+          : r
+      ));
+    }, 3000);
+  };
+
+  const handleDownload = (report: any) => {
+    // Simulate download
+    const blob = new Blob([`Report: ${report.name}\nGenerated: ${report.date}`], { type: "text/plain" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${report.name.replace(/\s+/g, '_')}.txt`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
+  const handleRetry = (reportId: number) => {
+    setReports(prev => prev.map(r => 
+      r.id === reportId 
+        ? { ...r, status: "processing" }
+        : r
+    ));
+    
+    // Simulate retry
+    setTimeout(() => {
+      setReports(prev => prev.map(r => 
+        r.id === reportId 
+          ? { ...r, status: "completed", size: "2.1 MB" }
+          : r
+      ));
+    }, 2000);
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -92,7 +158,10 @@ export default function ReportsPage() {
             Generate, view, and download various business reports.
           </p>
         </div>
-        <Button className="bg-blue-600 hover:bg-blue-700">
+        <Button 
+          className="bg-blue-600 hover:bg-blue-700"
+          onClick={() => setShowGenerateModal(true)}
+        >
           <Plus className="h-4 w-4 mr-2" />
           Generate Report
         </Button>
@@ -142,25 +211,76 @@ export default function ReportsPage() {
         </Card>
       </div>
 
-      {/* Filters */}
+      {/* Search and Filters */}
       <Card>
         <CardHeader>
           <div className="flex items-center space-x-4">
-            <Button variant="outline" size="sm">
-              <Calendar className="h-4 w-4 mr-2" />
-              Date Range
-            </Button>
-            <Button variant="outline" size="sm">
-              <Filter className="h-4 w-4 mr-2" />
-              Type
-            </Button>
-            <Button variant="outline" size="sm">
-              <Filter className="h-4 w-4 mr-2" />
-              Status
-            </Button>
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                placeholder="Search reports..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <select
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="all">All Types</option>
+              <option value="user">User Analytics</option>
+              <option value="financial">Financial</option>
+              <option value="security">Security</option>
+              <option value="performance">Performance</option>
+              <option value="activity">Activity</option>
+            </select>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="all">All Status</option>
+              <option value="completed">Completed</option>
+              <option value="processing">Processing</option>
+              <option value="failed">Failed</option>
+            </select>
           </div>
+          
+          {/* Active Filters */}
+          {(typeFilter !== "all" || statusFilter !== "all" || searchTerm) && (
+            <div className="flex items-center space-x-2 mt-4">
+              <span className="text-sm text-gray-600">Active filters:</span>
+              {searchTerm && (
+                <Badge variant="secondary" className="flex items-center space-x-1">
+                  <span>Search: {searchTerm}</span>
+                  <X className="h-3 w-3 cursor-pointer" onClick={() => setSearchTerm("")} />
+                </Badge>
+              )}
+              {typeFilter !== "all" && (
+                <Badge variant="secondary" className="flex items-center space-x-1">
+                  <span>Type: {typeFilter}</span>
+                  <X className="h-3 w-3 cursor-pointer" onClick={() => setTypeFilter("all")} />
+                </Badge>
+              )}
+              {statusFilter !== "all" && (
+                <Badge variant="secondary" className="flex items-center space-x-1">
+                  <span>Status: {statusFilter}</span>
+                  <X className="h-3 w-3 cursor-pointer" onClick={() => setStatusFilter("all")} />
+                </Badge>
+              )}
+            </div>
+          )}
         </CardHeader>
       </Card>
+
+      {/* Results Count */}
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-gray-600">
+          Showing {filteredReports.length} of {reports.length} reports
+        </p>
+      </div>
 
       {/* Reports List */}
       <Card>
@@ -169,7 +289,7 @@ export default function ReportsPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {reports.map((report) => (
+            {filteredReports.map((report) => (
               <div key={report.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors">
                 <div className="flex items-center space-x-4">
                   <div className="flex-shrink-0">
@@ -192,7 +312,11 @@ export default function ReportsPage() {
                     <p className="text-sm text-gray-500">{report.size}</p>
                   </div>
                   {report.status === 'completed' && (
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleDownload(report)}
+                    >
                       <Download className="h-4 w-4 mr-1" />
                       Download
                     </Button>
@@ -203,16 +327,128 @@ export default function ReportsPage() {
                     </Button>
                   )}
                   {report.status === 'failed' && (
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleRetry(report.id)}
+                    >
                       Retry
                     </Button>
                   )}
                 </div>
               </div>
             ))}
+            {filteredReports.length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                No reports found matching your criteria.
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
+
+      {/* Generate Report Modal */}
+      {showGenerateModal && (
+        <GenerateReportModal 
+          onClose={() => setShowGenerateModal(false)}
+          onGenerate={handleGenerateReport}
+        />
+      )}
+    </div>
+  );
+}
+
+// Generate Report Modal Component
+function GenerateReportModal({ onClose, onGenerate }: { onClose: () => void, onGenerate: (report: any) => void }) {
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    type: "User Analytics",
+    timeRange: "last30days"
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (formData.name && formData.description) {
+      onGenerate(formData);
+      setFormData({ name: "", description: "", type: "User Analytics", timeRange: "last30days" });
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold">Generate New Report</h2>
+          <Button variant="ghost" size="sm" onClick={onClose}>
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+        
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">Report Name</label>
+            <input
+              type="text"
+              value={formData.name}
+              onChange={(e) => setFormData({...formData, name: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter report name"
+              required
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium mb-1">Description</label>
+            <textarea
+              value={formData.description}
+              onChange={(e) => setFormData({...formData, description: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter report description"
+              rows={3}
+              required
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium mb-1">Report Type</label>
+            <select
+              value={formData.type}
+              onChange={(e) => setFormData({...formData, type: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="User Analytics">User Analytics</option>
+              <option value="Financial">Financial</option>
+              <option value="Security">Security</option>
+              <option value="Performance">Performance</option>
+              <option value="Activity">Activity</option>
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium mb-1">Time Range</label>
+            <select
+              value={formData.timeRange}
+              onChange={(e) => setFormData({...formData, timeRange: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="last7days">Last 7 Days</option>
+              <option value="last30days">Last 30 Days</option>
+              <option value="last90days">Last 90 Days</option>
+              <option value="lastyear">Last Year</option>
+            </select>
+          </div>
+          
+          <div className="flex space-x-3 pt-4">
+            <Button type="button" variant="outline" onClick={onClose} className="flex-1">
+              Cancel
+            </Button>
+            <Button type="submit" className="flex-1 bg-blue-600 hover:bg-blue-700">
+              Generate Report
+            </Button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
