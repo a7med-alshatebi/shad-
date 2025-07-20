@@ -12,18 +12,21 @@ import {
   LogOut 
 } from "lucide-react";
 import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: Home, current: true },
-  { name: "Users", href: "/users", icon: Users, current: false },
-  { name: "Analytics", href: "/analytics", icon: BarChart3, current: false },
-  { name: "Reports", href: "/reports", icon: FileText, current: false },
-  { name: "Notifications", href: "/notifications", icon: Bell, current: false },
-  { name: "Settings", href: "/settings", icon: Settings, current: false },
+  { name: "Dashboard", href: "/", icon: Home },
+  { name: "Users", href: "/users", icon: Users },
+  { name: "Analytics", href: "/analytics", icon: BarChart3 },
+  { name: "Reports", href: "/reports", icon: FileText },
+  { name: "Notifications", href: "/notifications", icon: Bell },
+  { name: "Settings", href: "/settings", icon: Settings },
 ];
 
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
+  const pathname = usePathname();
 
   return (
     <div
@@ -56,19 +59,21 @@ export function Sidebar() {
       <nav className="flex-1 px-4 py-4 space-y-2">
         {navigation.map((item) => {
           const Icon = item.icon;
+          const isActive = pathname === item.href;
           return (
-            <Button
-              key={item.name}
-              variant={item.current ? "default" : "ghost"}
-              className={cn(
-                "w-full justify-start",
-                collapsed ? "px-2" : "px-3",
-                item.current && "bg-blue-600 text-white hover:bg-blue-700"
-              )}
-            >
-              <Icon className={cn("h-4 w-4", !collapsed && "mr-3")} />
-              {!collapsed && <span>{item.name}</span>}
-            </Button>
+            <Link key={item.name} href={item.href}>
+              <Button
+                variant={isActive ? "default" : "ghost"}
+                className={cn(
+                  "w-full justify-start",
+                  collapsed ? "px-2" : "px-3",
+                  isActive && "bg-blue-600 text-white hover:bg-blue-700"
+                )}
+              >
+                <Icon className={cn("h-4 w-4", !collapsed && "mr-3")} />
+                {!collapsed && <span>{item.name}</span>}
+              </Button>
+            </Link>
           );
         })}
       </nav>
