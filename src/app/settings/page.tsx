@@ -37,12 +37,6 @@ interface NotificationData {
   marketingUpdates: boolean;
 }
 
-interface AppearanceData {
-  theme: string;
-  language: string;
-  timezone: string;
-}
-
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("profile");
   const [hasChanges, setHasChanges] = useState(false);
@@ -405,7 +399,10 @@ function NotificationSettings({ data, onChange }: { data: NotificationData, onCh
 }
 
 // Appearance Settings Component
-function AppearanceSettings({ data, onChange }: { data: any, onChange: (field: string, value: string) => void }) {
+function AppearanceSettings({ data, onChange }: { 
+  data: { theme: string; language: string; timezone: string }, 
+  onChange: (field: string, value: string) => void 
+}) {
   return (
     <Card>
       <CardHeader>

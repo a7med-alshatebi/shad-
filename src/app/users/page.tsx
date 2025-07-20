@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { UserTable } from "@/components/dashboard/user-table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -292,7 +291,7 @@ export default function UsersPage() {
       </div>
 
       {/* Users Table */}
-      <EnhancedUserTable users={filteredUsers} onUserUpdate={setUsers} />
+      <EnhancedUserTable users={filteredUsers} />
 
       {/* Add User Modal */}
       {showAddUserModal && (
@@ -318,7 +317,7 @@ export default function UsersPage() {
 }
 
 // Enhanced User Table Component
-function EnhancedUserTable({ users, onUserUpdate }: { users: User[], onUserUpdate: (users: User[]) => void }) {
+function EnhancedUserTable({ users }: { users: User[] }) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
