@@ -1,37 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { useAuth } from "@/lib/auth";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const { login, isLoading, isAuthenticated } = useAuth();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/");
+    }
+  }, [isAuthenticated, router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     setError("");
 
-    // Simple authentication - in a real app, you'd validate against a backend
-    if (email === "admin@dashboard.com" && password === "admin123") {
-      // Set authentication in localStorage
-      localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem("userEmail", email);
-      
-      // Redirect to dashboard
-      router.push("/");
-    } else {
-      setError("Invalid email or password");
+    try {
+      const success = await login(email, password);
+      if (success) {
+        // Redirect to dashboard
+        router.push("/");
+      } else {
+        setError("Invalid email or password");
+      }
+    } catch (err) {
+      setError("Login failed. Please try again.");
     }
-    
-    setIsLoading(false);
   };
 
   return (
