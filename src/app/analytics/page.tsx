@@ -132,11 +132,11 @@ export default function AnalyticsPage() {
         <CardContent>
           <div className="space-y-4">
             {[
-              { page: "/dashboard", views: "8,234", percentage: "18.2%" },
-              { page: "/users", views: "5,432", percentage: "12.0%" },
-              { page: "/analytics", views: "4,321", percentage: "9.6%" },
-              { page: "/reports", views: "3,210", percentage: "7.1%" },
-              { page: "/settings", views: "2,109", percentage: "4.7%" },
+              { page: "dashboard", views: "8,234", percentage: "18.2%" },
+              { page: "users", views: "5,432", percentage: "12.0%" },
+              { page: "analytics", views: "4,321", percentage: "9.6%" },
+              { page: "reports", views: "3,210", percentage: "7.1%" },
+              { page: "settings", views: "2,109", percentage: "4.7%" },
             ].map((item, index) => (
               <div key={index} className="flex items-center justify-between py-2">
                 <div className="flex items-center space-x-4">

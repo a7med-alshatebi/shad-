@@ -4,8 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Bell, Search, Menu } from "lucide-react";
+import { useAuth } from "@/lib/auth";
 
 export function Header() {
+  const { user } = useAuth();
+  
   return (
     <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
       {/* Left side - Search */}
@@ -41,12 +44,14 @@ export function Header() {
         {/* User Avatar */}
         <div className="flex items-center space-x-3">
           <div className="text-right">
-            <p className="text-sm font-medium text-gray-900">Ahmed Abdulnasser</p>
-            <p className="text-xs text-gray-500">ahmed@example.com</p>
+            <p className="text-sm font-medium text-gray-900">{user?.name || "User"}</p>
+            <p className="text-xs text-gray-500">{user?.email || "user@example.com"}</p>
           </div>
           <Avatar>
             <AvatarImage src="/api/placeholder/32/32" alt="User" />
-            <AvatarFallback>AA</AvatarFallback>
+            <AvatarFallback>
+              {user?.name?.charAt(0).toUpperCase() || "U"}
+            </AvatarFallback>
           </Avatar>
         </div>
       </div>

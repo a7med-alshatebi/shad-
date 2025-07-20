@@ -14,6 +14,7 @@ import {
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/lib/auth";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: Home },
@@ -27,6 +28,7 @@ const navigation = [
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
+  const { logout } = useAuth();
 
   return (
     <div
@@ -82,6 +84,7 @@ export function Sidebar() {
       <div className="p-4 border-t">
         <Button
           variant="ghost"
+          onClick={logout}
           className={cn(
             "w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50",
             collapsed ? "px-2" : "px-3"
