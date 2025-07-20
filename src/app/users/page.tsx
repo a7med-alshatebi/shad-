@@ -18,7 +18,24 @@ import {
 } from "lucide-react";
 
 // Mock data for demonstration
-const mockUsers = [
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  status: string;
+  lastActive: string;
+  avatar: string;
+}
+
+interface NewUser {
+  name: string;
+  email: string;
+  role: string;
+  status: string;
+}
+
+const mockUsers: User[] = [
   {
     id: 1,
     name: "John Doe",
@@ -92,8 +109,8 @@ export default function UsersPage() {
     blocked: users.filter(u => u.status === "blocked").length
   };
 
-  const handleAddUser = (newUser: any) => {
-    const user = {
+  const handleAddUser = (newUser: NewUser) => {
+    const user: User = {
       id: users.length + 1,
       ...newUser,
       lastActive: "Just now",
@@ -301,7 +318,7 @@ export default function UsersPage() {
 }
 
 // Enhanced User Table Component
-function EnhancedUserTable({ users, onUserUpdate }: { users: any[], onUserUpdate: (users: any[]) => void }) {
+function EnhancedUserTable({ users, onUserUpdate }: { users: User[], onUserUpdate: (users: User[]) => void }) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
@@ -400,7 +417,7 @@ function EnhancedUserTable({ users, onUserUpdate }: { users: any[], onUserUpdate
 }
 
 // Add User Modal Component
-function AddUserModal({ onClose, onAdd }: { onClose: () => void, onAdd: (user: any) => void }) {
+function AddUserModal({ onClose, onAdd }: { onClose: () => void, onAdd: (user: NewUser) => void }) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",

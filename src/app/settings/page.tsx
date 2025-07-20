@@ -12,10 +12,36 @@ import {
   Database, 
   Key,
   Save,
-  RefreshCw,
-  Check,
-  X
+  RefreshCw
 } from "lucide-react";
+
+interface ProfileData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: string;
+}
+
+interface SecurityData {
+  twoFactorEnabled: boolean;
+  passwordLastChanged: string;
+  apiKeysCount: number;
+}
+
+interface NotificationData {
+  emailAlerts: boolean;
+  securityWarnings: boolean;
+  weeklyReports: boolean;
+  criticalAlerts: boolean;
+  userActivities: boolean;
+  marketingUpdates: boolean;
+}
+
+interface AppearanceData {
+  theme: string;
+  language: string;
+  timezone: string;
+}
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("profile");
@@ -136,7 +162,6 @@ export default function SettingsPage() {
       {activeTab === "security" && (
         <SecuritySettings 
           data={securitySettings}
-          onChange={setSecuritySettings}
         />
       )}
 
@@ -182,7 +207,7 @@ export default function SettingsPage() {
 }
 
 // Profile Settings Component
-function ProfileSettings({ data, onChange }: { data: any, onChange: (field: string, value: string) => void }) {
+function ProfileSettings({ data, onChange }: { data: ProfileData, onChange: (field: string, value: string) => void }) {
   return (
     <Card>
       <CardHeader>
@@ -249,7 +274,7 @@ function ProfileSettings({ data, onChange }: { data: any, onChange: (field: stri
 }
 
 // Security Settings Component
-function SecuritySettings({ data, onChange }: { data: any, onChange: (data: any) => void }) {
+function SecuritySettings({ data }: { data: SecurityData }) {
   return (
     <Card>
       <CardHeader>
@@ -298,7 +323,7 @@ function SecuritySettings({ data, onChange }: { data: any, onChange: (data: any)
 }
 
 // Notification Settings Component
-function NotificationSettings({ data, onChange }: { data: any, onChange: (field: string, value: boolean) => void }) {
+function NotificationSettings({ data, onChange }: { data: NotificationData, onChange: (field: string, value: boolean) => void }) {
   return (
     <Card>
       <CardHeader>
