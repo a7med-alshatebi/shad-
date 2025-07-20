@@ -9,10 +9,9 @@ import {
   TrendingUp, 
   Users, 
   Eye, 
-  Download, 
-  Calendar,
-  Filter,
+  Download,
   RefreshCw,
+  Calendar,
   ArrowUpDown
 } from "lucide-react";
 

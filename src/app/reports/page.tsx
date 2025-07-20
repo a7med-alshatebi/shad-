@@ -4,7 +4,23 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Download, Calendar, Filter, Plus, Search, X } from "lucide-react";
+import { FileText, Download, Plus, Search, X } from "lucide-react";
+
+interface Report {
+  id: number;
+  name: string;
+  description: string;
+  type: string;
+  status: string;
+  date: string;
+  size: string;
+}
+
+interface NewReport {
+  name: string;
+  description: string;
+  type: string;
+}
 
 export default function ReportsPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -69,8 +85,8 @@ export default function ReportsPage() {
     return matchesSearch && matchesType && matchesStatus;
   });
 
-  const handleGenerateReport = (reportData: any) => {
-    const newReport = {
+  const handleGenerateReport = (reportData: NewReport) => {
+    const newReport: Report = {
       id: reports.length + 1,
       ...reportData,
       status: "processing",
@@ -90,7 +106,7 @@ export default function ReportsPage() {
     }, 3000);
   };
 
-  const handleDownload = (report: any) => {
+  const handleDownload = (report: Report) => {
     // Simulate download
     const blob = new Blob([`Report: ${report.name}\nGenerated: ${report.date}`], { type: "text/plain" });
     const url = window.URL.createObjectURL(blob);
@@ -359,7 +375,7 @@ export default function ReportsPage() {
 }
 
 // Generate Report Modal Component
-function GenerateReportModal({ onClose, onGenerate }: { onClose: () => void, onGenerate: (report: any) => void }) {
+function GenerateReportModal({ onClose, onGenerate }: { onClose: () => void, onGenerate: (report: NewReport) => void }) {
   const [formData, setFormData] = useState({
     name: "",
     description: "",

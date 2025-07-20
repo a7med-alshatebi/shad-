@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Bell, Settings, Check, X, AlertCircle, Info, CheckCircle, Search, Filter } from "lucide-react";
+import { Bell, Settings, Check, X, AlertCircle, Info, CheckCircle, Search } from "lucide-react";
 
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState([
