@@ -87,15 +87,15 @@ export function Header() {
           {showNotifications && (
             <div className="absolute right-0 mt-2 w-80 z-50">
               <Card className="shadow-lg border">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Notifications</CardTitle>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-blue-400">
+                  <CardTitle className="text-sm font-medium text-white">Notifications</CardTitle>
                   <div className="flex items-center space-x-2">
                     {unreadCount > 0 && (
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={markAllAsRead}
-                        className="text-xs"
+                        className="text-xs text-white hover:bg-blue-500"
                       >
                         Mark all read
                       </Button>
@@ -104,19 +104,19 @@ export function Header() {
                       variant="ghost"
                       size="icon"
                       onClick={() => setShowNotifications(false)}
-                      className="h-6 w-6"
+                      className="h-6 w-6 text-white hover:bg-blue-500"
                     >
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
                 </CardHeader>
-                <CardContent className="p-0">
+                <CardContent className="p-0 bg-blue-400">
                   <div className="max-h-64 overflow-y-auto">
                     {notifications.slice(0, 4).map((notification) => (
                       <div
                         key={notification.id}
-                        className={`p-3 border-b last:border-b-0 hover:bg-gray-500 cursor-pointer transition-colors ${
-                          !notification.read ? 'bg-blue-400' : ''
+                        className={`p-3 border-b last:border-b-0 hover:bg-blue-500 cursor-pointer transition-colors ${
+                          !notification.read ? 'bg-blue-400' : 'bg-blue-400'
                         }`}
                         onClick={() => markAsRead(notification.id)}
                       >
@@ -124,17 +124,17 @@ export function Header() {
                           {getNotificationIcon(notification.type)}
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between">
-                              <p className="text-sm font-medium text-gray-900 truncate">
+                              <p className="text-sm font-medium text-white truncate">
                                 {notification.title}
                               </p>
                               {!notification.read && (
-                                <div className="h-2 w-2 bg-blue-500 rounded-full ml-2"></div>
+                                <div className="h-2 w-2 bg-white rounded-full ml-2"></div>
                               )}
                             </div>
-                            <p className="text-xs text-gray-600 mt-1">
+                            <p className="text-xs text-blue-100 mt-1">
                               {notification.message}
                             </p>
-                            <p className="text-xs text-gray-400 mt-1">
+                            <p className="text-xs text-blue-200 mt-1">
                               {notification.time}
                             </p>
                           </div>
@@ -142,12 +142,12 @@ export function Header() {
                       </div>
                     ))}
                   </div>
-                  <div className="p-3 border-t">
+                  <div className="p-3 border-t border-blue-300 bg-blue-400">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={goToNotificationsPage}
-                      className="w-full"
+                      className="w-full bg-white text-blue-600 border-white hover:bg-blue-50"
                     >
                       View All Notifications
                     </Button>
