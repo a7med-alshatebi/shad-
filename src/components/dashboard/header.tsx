@@ -115,8 +115,8 @@ export function Header() {
                     {notifications.slice(0, 4).map((notification) => (
                       <div
                         key={notification.id}
-                        className={`p-3 border-b last:border-b-0 hover:bg-gray-50 cursor-pointer transition-colors ${
-                          !notification.read ? 'bg-blue-50' : ''
+                        className={`p-3 border-b last:border-b-0 hover:bg-gray-500 cursor-pointer transition-colors ${
+                          !notification.read ? 'bg-blue-400' : ''
                         }`}
                         onClick={() => markAsRead(notification.id)}
                       >
