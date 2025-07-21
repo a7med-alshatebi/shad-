@@ -5,65 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Bell, Settings, Check, X, AlertCircle, Info, CheckCircle, Search } from "lucide-react";
+import { useNotifications } from "@/lib/notifications";
 
 export default function NotificationsPage() {
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      title: "New user registration",
-      message: "John Doe has created a new account and is awaiting approval.",
-      type: "info",
-      time: "2 minutes ago",
-      read: false,
-      priority: "normal"
-    },
-    {
-      id: 2,
-      title: "System maintenance scheduled",
-      message: "Scheduled maintenance will occur tonight from 2:00 AM to 4:00 AM EST.",
-      type: "warning",
-      time: "1 hour ago",
-      read: false,
-      priority: "high"
-    },
-    {
-      id: 3,
-      title: "Monthly report generated",
-      message: "Your monthly analytics report is ready for download.",
-      type: "success",
-      time: "3 hours ago",
-      read: true,
-      priority: "normal"
-    },
-    {
-      id: 4,
-      title: "Failed login attempts detected",
-      message: "Multiple failed login attempts detected from IP 192.168.1.100.",
-      type: "error",
-      time: "6 hours ago",
-      read: false,
-      priority: "critical"
-    },
-    {
-      id: 5,
-      title: "Backup completed successfully",
-      message: "Daily backup completed at 3:00 AM. All data secured.",
-      type: "success",
-      time: "1 day ago",
-      read: true,
-      priority: "low"
-    },
-    {
-      id: 6,
-      title: "Storage usage warning",
-      message: "Storage usage has reached 85% capacity. Consider upgrading your plan.",
-      type: "warning",
-      time: "2 days ago",
-      read: false,
-      priority: "high"
-    }
-  ]);
-
+  const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } = useNotifications();
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
@@ -73,29 +18,14 @@ export default function NotificationsPage() {
     const matchesSearch = notification.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          notification.message.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = typeFilter === "all" || notification.type === typeFilter;
-    const matchesPriority = priorityFilter === "all" || notification.priority === priorityFilter;
+    const matchesPriority = priorityFilter === "all" || (notification.priority || "normal") === priorityFilter;
     
     return matchesSearch && matchesType && matchesPriority;
   });
 
-  const unreadCount = notifications.filter(n => !n.read).length;
-
-  const markAsRead = (id: number) => {
-    setNotifications(prev => prev.map(n => 
-      n.id === id ? { ...n, read: true } : n
-    ));
-  };
-
-  const markAllAsRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
-  };
-
-  const deleteNotification = (id: number) => {
-    setNotifications(prev => prev.filter(n => n.id !== id));
-  };
-
   const clearAll = () => {
-    setNotifications([]);
+    // Clear all notifications by deleting them one by one
+    notifications.forEach(notification => deleteNotification(notification.id));
   };
 
   const getIcon = (type: string) => {
@@ -181,7 +111,7 @@ export default function NotificationsPage() {
             <AlertCircle className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{notifications.filter(n => n.priority === 'critical').length}</div>
+            <div className="text-2xl font-bold">{notifications.filter(n => (n.priority || "normal") === 'critical').length}</div>
             <p className="text-xs text-red-600">High priority</p>
           </CardContent>
         </Card>
@@ -269,8 +199,8 @@ export default function NotificationsPage() {
                       {notification.title}
                     </h3>
                     <div className="flex items-center space-x-2">
-                      <Badge className={getPriorityColor(notification.priority)}>
-                        {notification.priority}
+                      <Badge className={getPriorityColor(notification.priority || "normal")}>
+                        {notification.priority || "normal"}
                       </Badge>
                       {!notification.read && (
                         <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
